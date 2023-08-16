@@ -69,6 +69,7 @@ function getCurrentWeather(queryURL) {
         currentTemp.text(data.main.temp);
         currentWind.text(data.wind.speed);
         currentHumidity.text(data.main.humidity);
+        fiveDayForecast(latitude, longitude);
     });
 };
 
@@ -83,6 +84,7 @@ searchBtn.on("click", function() {
     localStorage.setItem("cityHistory", JSON.stringify(cityHistory));
     createHistoryButtons();
 });
+
 function createHistoryButtons() {
     searchHistory.empty();
     let addedValues = [];
@@ -97,7 +99,7 @@ function createHistoryButtons() {
             searchHistory.append(historyBtn);
             searchHistory.css("display", "flex");
             searchHistory.css("flex-wrap", "wrap");
-
+            
             addedValues.push(cityName);
         }
     }
@@ -113,3 +115,23 @@ clearBtn.on("click", function() {
     cityHistory= [];
     localStorage.clear;
 });
+
+function fiveDayForecast(lat, lon) {
+    let queryURL = "https://api.openweathermap.org/data/2.5/forecast?lat=" + lat +"&lon=" + lon + "&appid=" + APIKey + "&units=imperial";
+    fetch(queryURL).then(function (response) {
+        return response.json();
+    }).then(function (data) {
+        forecastCount = 0;
+        for (let i = 0; i < 5; i++) {
+            let fiveDays = $(`#day${i}`);
+            weatherIcon = data.list[forecastCount].weather[0].icon;
+            unixDate = data.list[forecastCount].dt;
+            fiveDays.children(".date").text(convertUnix(unixDate));
+            fiveDays.children().attr("src", `https://openweathermap.org/img/wn/${weatherIcon}.png`);
+            fiveDays.children().children(".temp").text(data.list[forecastCount].main.temp);
+            fiveDays.children().children(".wind").text(data.list[forecastCount].wind.speed);
+            fiveDays.children().children(".humidity").text(data.list[forecastCount].main.humidity);
+            forecastCount = forecastCount + 8;
+        }
+    });
+}
