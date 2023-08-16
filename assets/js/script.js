@@ -15,7 +15,7 @@ let currentHumidity = $(".current-humidity");
 
 let currentMonth, currentDay, currentYear, fullDate, unixDate, convertedDate, currentTime;
 
-
+// Function to generate Date
 function convertUnix(unixDate) {
     currentTime = new Date();
     convertedDate = new Date(unixDate*1000 + currentTime.getTimezoneOffset() * 60 * 1000);
@@ -26,6 +26,7 @@ function convertUnix(unixDate) {
     return fullDate;
 };
 
+// Sets a default city on page load
 function init() {
     var historyTemp = localStorage.getItem("cityHistory");
     if(historyTemp){
@@ -44,6 +45,7 @@ function init() {
 
 init();
 
+// Fetches weather data from API
 function getCurrentWeather(queryURL) {
     localStorage.setItem("entered", queryURL);
     fetch(queryURL).then(function (response) {
@@ -75,6 +77,7 @@ searchBtn.on("click", function() {
     createHistoryButtons();
 });
 
+// Creates search history, prevents duplicate searches
 function createHistoryButtons() {
     searchHistory.empty();
     let addedValues = [];
@@ -93,17 +96,20 @@ function createHistoryButtons() {
     }
 }
 
+// Allows search history buttons to function
 searchHistory.on("click", ".history-btn", function() {
     queryURL = "https://api.openweathermap.org/data/2.5/weather?q=" + $(this).val() + "&appid=" + APIKey + "&units=imperial";
     getCurrentWeather(queryURL);
 })
 
+// Clears history
 clearBtn.on("click", function() {
     searchHistory.empty();
     cityHistory= [];
     localStorage.clear;
 });
 
+// Fetches fron API for the next 5 days
 function fiveDayForecast(lat, lon) {
     let queryURL = "https://api.openweathermap.org/data/2.5/forecast?lat=" + lat +"&lon=" + lon + "&appid=" + APIKey + "&units=imperial";
     fetch(queryURL).then(function (response) {
