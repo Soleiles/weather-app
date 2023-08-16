@@ -5,3 +5,43 @@
     text-decoration: none;
 }
 
+body {
+    background-color: #e1f1fc;
+}
+
+.btn {
+    background-color: #74b8f2;
+}
+
+.clear-btn, .history-btn {
+    border-radius: 5px;
+    background-color: #3b9aed;
+}
+
+
+#search-history {
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: column;
+}
+
+.history-btn {
+    margin-bottom: 10px;
+}
+
+.weather-today {
+    background-color: #bbe2fd;
+}
+
+.five-day {
+    display: flex;
+    justify-content: space-between;
+}
+
+.card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 10px;
+    background-color: #bbe2fd;
+}
