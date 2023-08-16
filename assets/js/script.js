@@ -14,10 +14,9 @@ let forecastCount;
 let weatherIcon;
 let longitude, latitude;
 let cityHistory = [];
-
 const searchBtn = $(".btn");
 const clearBtn = $(".clear-btn");
-let searchHistory = $(".search-history");
+let searchHistory = $("#search-history");
 let currentCity = $(".current-city");
 let currentDate = $(".current-date");
 let currentTemp = $(".current-temp");
@@ -42,7 +41,8 @@ function init() {
     if(historyTemp){
         cityHistory = JSON.parse(historyTemp);
     }
-    var searchTemp = localStorage.getItem("search");
+    createHistoryButtons();
+    var searchTemp = localStorage.getItem("entered");
     if(searchTemp){
         getCurrentWeather(searchTemp);
     } else {
@@ -55,7 +55,7 @@ function init() {
 init();
 
 function getCurrentWeather(queryURL) {
-    localStorage.setItem("search", queryURL);
+    localStorage.setItem("entered", queryURL);
     fetch(queryURL).then(function (response) {
         return response.json();
     }).then(function (data) {
@@ -81,4 +81,35 @@ searchBtn.on("click", function() {
     }
     cityHistory.push(cityToSearch);
     localStorage.setItem("cityHistory", JSON.stringify(cityHistory));
+    createHistoryButtons();
+});
+function createHistoryButtons() {
+    searchHistory.empty();
+    let addedValues = [];
+
+    for (let i = 0; i < cityHistory.length; i++) {
+        let cityName = cityHistory[i];
+        if (!addedValues.includes(cityName)) {
+            let historyBtn = $("<button>");
+            historyBtn.text(cityName);
+            historyBtn.val(cityName);
+            historyBtn.attr("class", "history-btn");
+            searchHistory.append(historyBtn);
+            searchHistory.css("display", "flex");
+            searchHistory.css("flex-wrap", "wrap");
+
+            addedValues.push(cityName);
+        }
+    }
+}
+
+searchHistory.on("click", ".history-btn", function() {
+    queryURL = "https://api.openweathermap.org/data/2.5/weather?q=" + $(this).val() + "&appid=" + APIKey + "&units=imperial";
+    getCurrentWeather(queryURL);
+})
+
+clearBtn.on("click", function() {
+    searchHistory.empty();
+    cityHistory= [];
+    localStorage.clear;
 });
